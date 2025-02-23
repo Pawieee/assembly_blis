@@ -11,7 +11,7 @@ includelib \masm32\lib\masm32.lib
 
 .data
     file_handle HANDLE ?
-    filename db "D:\acads\3rd Year\2nd SEM\1st Term\CS 11\masm files\assembly_blis\", 0
+    filename db "D:\acads\3rd Year\2nd SEM\1st Term\CS 11\masm files\assembly_blis", 0
     file_contents db 100000 dup(?)
     bytes_read DWORD ?
 
@@ -33,7 +33,7 @@ includelib \masm32\lib\masm32.lib
     sem1 db "\sem1", 0
     sem2 db "\sem2", 0
     
-    file_loc db 100 dup(?)
+    file_loc db 1000 dup(?)
     
 .data?
     year db 3 dup(?)
@@ -55,8 +55,8 @@ start:
     invoke StdOut, addr _msg2
     invoke StdIn, addr sem, 3
 
-    .if year == 1
-        .if sem == 1
+    .if year == "1"
+        .if sem == "1"
             push offset filename
             push offset sem1
             push offset yr1
@@ -65,8 +65,33 @@ start:
         .endif
     .endif
 
+    create_file:
+        push 0
+        push FILE_ATTRIBUTE_NORMAL
+        push OPEN_EXISTING
+        push 0
+        push 0
+        push FILE_READ_DATA
+        push offset file_loc
+        call CreateFileA
+        mov file_handle, eax
+
+    read_file:
+        push 0
+        push offset bytes_read
+        push 100000
+        push offset file_contents
+        push file_handle
+        call ReadFile
+
+    invoke ClearScreen
+    invoke StdOut, offset file_contents
 create_dest proc param1:DWORD, param2:DWORD, param3:DWORD, param4:DWORD
     push param1
+    push param4
+    call szCatStr
+
+    push param3
     push param4
     call szCatStr
 
@@ -78,26 +103,5 @@ create_dest proc param1:DWORD, param2:DWORD, param3:DWORD, param4:DWORD
     push param4
     call StdOut
 create_dest endp
-    ;create_file:
-        ;push 0
-       ; push FILE_ATTRIBUTE_NORMAL
-       ; push OPEN_EXISTING
-       ; push 0
-       ; push 0
-      ;  push FILE_READ_DATA
-      ;  push offset filename
-      ;  call CreateFileA
-      ;  mov file_handle, eax
-
-    ;read_file:
-        ;push 0
-       ; push offset bytes_read
-       ; push 100000
-       ; push offset file_contents
-        ;push file_handle
-       ; call ReadFile
-
-   ; invoke ClearScreen
-    ;invoke StdOut, offset file_contents
     invoke ExitProcess, 0
 end start
