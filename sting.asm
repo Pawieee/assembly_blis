@@ -18,26 +18,27 @@ includelib \masm32\lib\masm32.lib
 .code
 start:
 
-create_file:
-    push 0
-    push FILE_ATTRIBUTE_NORMAL
-    push OPEN_EXISTING
-    push 0
-    push 0
-    push FILE_READ_DATA
-    push offset filename
-    call CreateFileA
-    mov file_handle, eax
+    
+    create_file:
+        push 0
+        push FILE_ATTRIBUTE_NORMAL
+        push OPEN_EXISTING
+        push 0
+        push 0
+        push FILE_READ_DATA
+        push offset filename
+        call CreateFileA
+        mov file_handle, eax
 
-read_file:
-    push 0
-    push offset bytes_read
-    push 100000
-    push offset file_contents
-    push file_handle
-    call ReadFile
+    read_file:
+        push 0
+        push offset bytes_read
+        push 100000
+        push offset file_contents
+        push file_handle
+        call ReadFile
 
-invoke ClearScreen
-invoke StdOut, offset file_contents
-invoke ExitProcess, 0
+    invoke ClearScreen
+    invoke StdOut, offset file_contents
+    invoke ExitProcess, 0
 end start
