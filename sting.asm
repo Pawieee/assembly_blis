@@ -33,12 +33,7 @@ include helper\set_courses.inc
     _first_sem db "[1] 1st Semester", 10,0
     _second_sem db "[2] 2nd Semester", 10,0
 
-
-
-    sem1 db "\sem1", 0
-    sem2 db "\sem2", 0
-
-    prospec db "\sem\prospectus.txt", 0
+    prospec db "base\\prospectus.txt", 0
     
 
     
@@ -66,12 +61,9 @@ main_menu:
     invoke StdOut, addr _menu4
     invoke StdIn, addr menu, 3
 
-   ; get current directory
-    invoke RtlZeroMemory, addr file_loc, 1000
-    invoke GetCurrentDirectory, 1000, addr file_loc
-
     .if menu == '1'
         invoke lstrcat, addr file_loc, addr prospec
+        invoke ReadFileProc, addr file_loc
         ;jmp create_file
     .elseif menu == '2'
         invoke StdOut, addr _first_year
@@ -95,26 +87,6 @@ main_menu:
     .elseif menu == '4'
         invoke ExitProcess, 0
     .endif
-
-    create_file:
-        invoke CreateFileA, addr file_loc, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL
-        mov file_handle, eax
-        .if eax == INVALID_HANDLE_VALUE
-            ;invoke StdOut, addr error_file_msg
-            jmp main_menu
-        .endif
-        jmp read_file
-
-    read_file:
-        ; Read the file contents
-        invoke RtlZeroMemory, addr file_contents, 100000
-        invoke ReadFile, file_handle, addr file_contents, 100000, addr bytes_read, NULL
-        invoke CloseHandle, file_handle
-        invoke ClearScreen
-        invoke StdOut, offset file_contents
-        ;invoke StdOut, addr press_enter_msg
-        ;invoke StdIn, addr buffer, 256  ; Wait for user to press Enter
-        jmp main_menu
 
 
     jmp main_menu

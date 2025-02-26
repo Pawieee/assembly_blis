@@ -1,6 +1,6 @@
 .DATA
     error_msg db "Error opening file", 0
-    buffer db 512*3 dup(?)
+    buffer db 25000 dup(?)
     bytesRead dd ?
     wordBuffer db 512 dup(?)
     comma db ",", 0
