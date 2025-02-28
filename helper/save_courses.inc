@@ -1,18 +1,11 @@
 .data
-    first_sem1_arr DWORD 8 DUP(0)
-    first_sem2_arr DWORD 8 DUP(0)
-    second_sem1_arr DWORD 8 DUP(0)
-    second_sem2_arr DWORD 8 DUP(0)
-    third_sem1_arr DWORD 7 DUP(0)
-    third_sem2_arr DWORD 6 DUP(0)
-    fourth_Sem1_arr DWORD 5 DUP(0)
-    fourth_sem2_arr DWORD 2 DUP(0)
+
 
     ; Fixed-size array of pointers (addresses)
     courseArray DWORD 4 DUP(0)  ; Array of 4 pointers (initialized to 0)
 
 .code
-main PROC
+SaveCourse PROC arr:DWORD, course:BYTE
     ; Store addresses of courses in the array
     lea eax, course1
     mov courseArray[0], eax
@@ -26,6 +19,10 @@ main PROC
     lea eax, course4
     mov courseArray[12], eax
 
+    ret
+SaveCourse ENDP
+
+ViewCourses PROC
     ; Access and print the courses
     mov ecx, 4          ; Number of courses
     xor ebx, ebx        ; Index for the array
@@ -36,4 +33,4 @@ printLoop:
     loop printLoop
 
     ret
-main ENDP
+ViewCourses ENDP

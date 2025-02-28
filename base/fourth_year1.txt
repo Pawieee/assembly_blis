@@ -17,3 +17,9 @@
 +-----------+-----------------------------------+---------------+-----+-----+-------+----------+
                                                 |  Total Units  |  15 |  0  |   15  |
                                                 +---------------+-----+-----+-------+
+
+                    Enroll courses by choosing the numbers associated with the code
+
+                        [1] FL 111          [3] CAED 500c        [5] LIS 412
+
+                        [2] GE 11           [4] LIS 411          [0] Return to menu

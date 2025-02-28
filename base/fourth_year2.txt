@@ -11,3 +11,10 @@
 +-----------+-----------------------------------+---------------+-----+-----+-------+----------+
                                                 |  Total Units  |  10 |  0  |   10  |
                                                 +---------------+-----+-----+-------+
+
+
+                    Enroll courses by choosing the numbers associated with the code
+
+                                [1] LIS 421         [0] Return to menu
+
+                                [2] LIS 422         
