@@ -19,3 +19,9 @@
 +-----------+-----------------------------------+---------------+-----+-----+-------+----------+
                                                 |  Total Units  |  16 |  2  |   18  |
                                                 +---------------+-----+-----+-------+
+
+                    Enroll courses by choosing the numbers associated with the code
+
+                [1] GE 9            [3] GE 20           [5] LIS 322        [0] Return to menu         
+
+                [2] LIS 226         [4] LIS 321         [6] LIS 301        

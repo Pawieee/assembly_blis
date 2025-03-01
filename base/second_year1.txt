@@ -23,3 +23,9 @@
 +-----------+-----------------------------------+---------------+-----+-----+-------+----------+
                                                 |  Total Units  |  23 |  0  |   23  |
                                                 +---------------+-----+-----+-------+
+
+                    Enroll courses by choosing the numbers associated with the code
+
+    [1] GE 8            [3] LIS 221         [5] LIS 219        [7] LIS 220          [0] Return to menu
+
+    [2] GE 7            [4] LIS 218         [6] LIS 217        [8] PAHF 3

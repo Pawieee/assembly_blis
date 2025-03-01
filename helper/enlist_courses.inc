@@ -1,171 +1,158 @@
 .data
-    ;First_Year
-    ;First Semester
-    ge15 db "GE 15", 0
-    lis121 db "LIS 121", 0
-    ge2 db "GE 2", 0
-    ge3 db "GE 3", 0
-    lis111 db "LIS 111", 0
-    lis112 db "LIS 112", 0
-    pahf1 db "PAHF 1", 0
-    nstp1 db "NSTP 1", 0
-    ;Second Semester
-    uge1 db "UGE 1", 0
-    ge4 db "GE 4", 0
-    ge1 db "GE 1", 0
-    lis122 db "LIS 122", 0
-    lis123 db "LIS 123", 0
-    lis124 db "LIS 124", 0
-    pahf2 db "PAHF 2", 0
-    nstp2 db "NSTP 2", 0
+    course111 db "GE 15", 0
+    course112 db "LIS 121", 0
+    course113 db "GE 2", 0
+    course114 db "GE 3", 0
+    course115 db "LIS 111", 0
+    course116 db "LIS 112", 0
+    course117 db "PAHF 1", 0
+    course118 db "NSTP 1", 0
+    course121 db "UGE 1", 0
+    course122 db "GE 4", 0
+    course123 db "GE 1", 0
+    course124 db "LIS 122", 0
+    course125 db "LIS 123", 0
+    course126 db "LIS 124", 0
+    course127 db "PAHF 2", 0
+    course128 db "NSTP 2", 0
+    course211 db "GE 8", 0
+    course212 db "GE 7", 0
+    course213 db "LIS 221", 0
+    course214 db "LIS 218", 0
+    course215 db "LIS 219", 0
+    course216 db "LIS 217", 0
+    course217 db "LIS 220", 0
+    course218 db "PAHF 3", 0
+    course221 db "GE 6", 0
+    course222 db "l 2", 0
+    course223 db "GE 5", 0
+    course224 db "LIS 223", 0
+    course225 db "LIS 224", 0
+    course226 db "LIS 225/L", 0
+    course227 db "LIS 229", 0
+    course228 db "PAHF 4", 0
+    course311 db "LIS 300", 0
+    course312 db "LIS 228", 0
+    course313 db "MTH 119", 0
+    course314 db "LIS 311", 0
+    course315 db "LIS 312", 0
+    course316 db "LIS 313/L", 0
+    course317 db "LIS 314", 0
+    course321 db "GE 9", 0
+    course322 db "LIS 226", 0
+    course323 db "GE 20", 0
+    course324 db "LIS 321/L", 0
+    course325 db "LIS 322/L", 0
+    course326 db "LIS 301", 0
+    course411 db "FL 111", 0
+    course412 db "GE 11", 0
+    course413 db "CAED 500c", 0
+    course414 db "LIS 411", 0
+    course415 db "LIS 412", 0
+    course421 db "LIS 421", 0
+    course422 db "LIS 422", 0
     
-    ;Second_Year
-    ;First Semester
-    ge8 db "GE 8", 0
-    ge7 db "GE 7", 0
-    lis221 db "LIS 221", 0
-    lis218 db "LIS 218", 0
-    lis219 db "LIS 219", 0
-    lis217 db "LIS 217", 0
-    lis220 db "LIS 220", 0
-    pahf3 db "PAHF 3", 0
-    ;Second Semester
-    ge6 db "GE 6", 0
-    uge2 db "UGE 2", 0
-    ge5 db "GE 5", 0
-    lis223 db "LIS 223", 0
-    lis224 db "LIS 224", 0
-    lis225 db "LIS 225/L", 0
-    lis229 db "LIS 229", 0
-    pahf4 db "PAHF 4", 0
+    newLine         db 10, 0
+    return_prompt   db "Press Enter to return to main menu...", 10, 0
 
-    ;Third_Year
-    ;First Semester
-    lis300 db "LIS 300", 0
-    lis228 db "LIS 228", 0
-    mth119 db "MTH 119", 0
-    lis311 db "LIS 311", 0
-    lis312 db "LIS 312", 0
-    lis313 db "LIS 313/L", 0
-    lis314 db "LIS 314", 0
-    ;Second Semester
-    ge9 db "GE 9", 0
-    lis226 db "LIS 226", 0
-    ge20 db "GE 20", 0
-    lis321 db "LIS 321", 0
-    lis322 db "LIS 322", 0
-    lis301 db "LIS 301", 0
+    courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
+                DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
+                DWORD OFFSET course211, OFFSET course212, OFFSET course213, OFFSET course214, OFFSET course215, OFFSET course216, OFFSET course217, OFFSET course218
+                DWORD OFFSET course221, OFFSET course222, OFFSET course223, OFFSET course224, OFFSET course225, OFFSET course226, OFFSET course227, OFFSET course228
+                DWORD OFFSET course311, OFFSET course312, OFFSET course313, OFFSET course314, OFFSET course315, OFFSET course316, OFFSET course317
+                DWORD OFFSET course321, OFFSET course322, OFFSET course323, OFFSET course324, OFFSET course325, OFFSET course326
+                DWORD OFFSET course411, OFFSET course412, OFFSET course413, OFFSET course414, OFFSET course415
+                DWORD OFFSET course421, OFFSET course422
 
-    ;Fourth_Year
-    ;First Semester
-    FL111 db "FL 111", 0
-    ge11 db "GE 11", 0
-    caed500c db "CAED 500c", 0
-    lis411 db "LIS 411", 0
-    lis412 db "LIS 412", 0
-    ;Second Semester
-    lis421 db "LIS 421", 0
-    lis422 db "LIS 422", 0
-    ;and so on... thanks
-    
+.data?
+    _inputs db 4 dup(?)
 
 .code
-EnlistCourses PROC sem:BYTE, year:BYTE, course BYTE
+EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD
+    LOCAL start_index:DWORD
+    mov start_index, 0
+    movzx eax, year_num
+    movzx ebx, sem_num
 
-    ; Ask for year input (1st to 4th year)
-    cmp year, 1          ; Check if the year is 1
-    je first_year         ; Jump to first_year if year is 1
-    cmp year, 2          ; Check if the year is 2
-    je second_year        ; Jump to second_year if year is 2
-    cmp year, 3          ; Check if the year is 3
-    je third_year         ; Jump to third_year if year is 3
-    cmp year, 4          ; Check if the year is 4
-    je fourth_year        ; Jump to fourth_year if year is 4
-    jmp invalid_year      ; Jump to invalid_year if the year is not between 1 and 4
+    .if eax == 1
+        .if ebx == 1
+            mov start_index, 0
+        .else
+            mov start_index, 8
+        .endif
+    .elseif eax == 2
+        .if ebx == 1
+            mov start_index, 16
+        .else
+            mov start_index, 24
+        .endif
+    .elseif eax == 3
+        .if ebx == 1
+            mov start_index, 32
+        .else
+            mov start_index, 39
+        .endif
+    .elseif eax == 4
+        .if ebx == 1
+            mov start_index, 45
+        .else
+            mov start_index, 50
+        .endif
+    .endif
 
-first_year:
-    ; Year 1 - Check for semester
-    cmp sem, 1           ; Check if the semester is 1
-    je first_sem_1        ; Jump to first_sem_1 if it's first semester
-    cmp sem, 2           ; Check if the semester is 2
-    je first_sem_2        ; Jump to first_sem_2 if it's second semester
-    jmp invalid_sem       ; Jump to invalid_sem if it's not semester 1 or 2
+    movzx ecx, course_num
+    dec ecx
+    add start_index, ecx
 
-second_year:
-    ; Year 2 - Check for semester
-    cmp sem, 1           ; Check if the semester is 1
-    je second_sem_1       ; Jump to second_sem_1 if it's first semester
-    cmp sem, 2           ; Check if the semester is 2
-    je second_sem_2       ; Jump to second_sem_2 if it's second semester
-    jmp invalid_sem
+    mov eax, start_index
+    shl eax, 2
+    mov esi, offset courseTable
+    add esi, eax
+    mov edx, [esi]
 
-third_year:
-    ; Year 3 - Check for semester
-    cmp sem, 1
-    je third_sem_1
-    cmp sem, 2
-    je third_sem_2
-    jmp invalid_sem
+    movzx ecx, course_num
+    dec ecx
+    shl ecx, 2
+    mov edi, arr
+    add edi, ecx
+    mov [edi], edx
 
-fourth_year:
-    ; Year 4 - Check for semester
-    cmp sem, 1
-    je fourth_sem_1
-    cmp sem, 2
-    je fourth_sem_2
-    jmp invalid_sem
-
-invalid_year:
-    ; Handle invalid year input
-    ; Add your code here to notify the user about invalid year
+    ;invoke StdOut, addr course111
     ret
+EnlistCourse endp
 
-invalid_sem:
-    ; Handle invalid semester input
-    ; Add your code here to notify the user about invalid semester
+DisplayCourses proc array_ptr:DWORD, element_count:DWORD
+    pushad              ; Save all registers
+    mov esi, array_ptr  ; Array pointer
+    mov ecx, element_count ; Element count
+    xor edx, edx        ; Index counter
+
+print_loop:
+    cmp edx, ecx        ; Check if index >= count
+    jge done_printing
+
+    ; Get current element
+    mov eax, [esi + edx*4]
+    test eax, eax       ; Check if element is 0
+    jz skip_print
+
+    ; Print course name
+    push edx            ; Preserve index
+    push ecx            ; Preserve counter
+    invoke StdOut, eax
+    invoke StdOut, addr newline
+    pop ecx             ; Restore counter
+    pop edx             ; Restore index
+
+skip_print:
+    inc edx             ; Next index
+    jmp print_loop
+
+done_printing:
+    ; Return to menu prompt
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+
+    popad               ; Restore registers
     ret
-
-first_sem_1:
-    ; Year 1, Semester 1 - Load courses
-    ; Example: GE 15, LIS 111, PAHF 1, NSTP 1
-    ; Add conditions to select courses for first semester of first year
-    ret
-
-first_sem_2:
-    ; Year 1, Semester 2 - Load courses
-    ; Example: GE 2, GE 3, LIS 121, LIS 122
-    ; Add conditions to select courses for second semester of first year
-    ret
-
-second_sem_1:
-    ; Year 2, Semester 1 - Load courses
-    ; Add courses for year 2, semester 1
-    ret
-
-second_sem_2:
-    ; Year 2, Semester 2 - Load courses
-    ; Add courses for year 2, semester 2
-    ret
-
-third_sem_1:
-    ; Year 3, Semester 1 - Load courses
-    ; Add courses for year 3, semester 1
-    ret
-
-third_sem_2:
-    ; Year 3, Semester 2 - Load courses
-    ; Add courses for year 3, semester 2
-    ret
-
-fourth_sem_1:
-    ; Year 4, Semester 1 - Load courses
-    ; Add courses for year 4, semester 1
-    ret
-
-fourth_sem_2:
-    ; Year 4, Semester 2 - Load courses
-    ; Add courses for year 4, semester 2
-    ret
-
-EnlistCourses ENDP
-
+DisplayCourses endp

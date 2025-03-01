@@ -21,3 +21,9 @@
 +-----------+-----------------------------------+---------------+-----+-----+-------+----------+
                                                 |  Total Units  |  26 |  0  |   26  |
                                                 +---------------+-----+-----+-------+
+                                                
+                    Enroll courses by choosing the numbers associated with the code
+
+        [1] UGE 1           [3] GE 1          [5] LIS 123        [7] PAHF 2     [0] Return to menu
+
+        [2] GE 4            [4] LIS 122       [6] LIS 124        [8] NSTP 2
