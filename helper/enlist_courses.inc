@@ -71,6 +71,101 @@
 
 .code
 EnlistCourses PROC sem:BYTE, year:BYTE, course BYTE
-    ;ADD DRI CONDITIONS NA IYA I-SELECT TUNG COURSES ABOVE, BASED ON YEAR AND SEM
+
+    ; Ask for year input (1st to 4th year)
+    cmp year, 1          ; Check if the year is 1
+    je first_year         ; Jump to first_year if year is 1
+    cmp year, 2          ; Check if the year is 2
+    je second_year        ; Jump to second_year if year is 2
+    cmp year, 3          ; Check if the year is 3
+    je third_year         ; Jump to third_year if year is 3
+    cmp year, 4          ; Check if the year is 4
+    je fourth_year        ; Jump to fourth_year if year is 4
+    jmp invalid_year      ; Jump to invalid_year if the year is not between 1 and 4
+
+first_year:
+    ; Year 1 - Check for semester
+    cmp sem, 1           ; Check if the semester is 1
+    je first_sem_1        ; Jump to first_sem_1 if it's first semester
+    cmp sem, 2           ; Check if the semester is 2
+    je first_sem_2        ; Jump to first_sem_2 if it's second semester
+    jmp invalid_sem       ; Jump to invalid_sem if it's not semester 1 or 2
+
+second_year:
+    ; Year 2 - Check for semester
+    cmp sem, 1           ; Check if the semester is 1
+    je second_sem_1       ; Jump to second_sem_1 if it's first semester
+    cmp sem, 2           ; Check if the semester is 2
+    je second_sem_2       ; Jump to second_sem_2 if it's second semester
+    jmp invalid_sem
+
+third_year:
+    ; Year 3 - Check for semester
+    cmp sem, 1
+    je third_sem_1
+    cmp sem, 2
+    je third_sem_2
+    jmp invalid_sem
+
+fourth_year:
+    ; Year 4 - Check for semester
+    cmp sem, 1
+    je fourth_sem_1
+    cmp sem, 2
+    je fourth_sem_2
+    jmp invalid_sem
+
+invalid_year:
+    ; Handle invalid year input
+    ; Add your code here to notify the user about invalid year
     ret
+
+invalid_sem:
+    ; Handle invalid semester input
+    ; Add your code here to notify the user about invalid semester
+    ret
+
+first_sem_1:
+    ; Year 1, Semester 1 - Load courses
+    ; Example: GE 15, LIS 111, PAHF 1, NSTP 1
+    ; Add conditions to select courses for first semester of first year
+    ret
+
+first_sem_2:
+    ; Year 1, Semester 2 - Load courses
+    ; Example: GE 2, GE 3, LIS 121, LIS 122
+    ; Add conditions to select courses for second semester of first year
+    ret
+
+second_sem_1:
+    ; Year 2, Semester 1 - Load courses
+    ; Add courses for year 2, semester 1
+    ret
+
+second_sem_2:
+    ; Year 2, Semester 2 - Load courses
+    ; Add courses for year 2, semester 2
+    ret
+
+third_sem_1:
+    ; Year 3, Semester 1 - Load courses
+    ; Add courses for year 3, semester 1
+    ret
+
+third_sem_2:
+    ; Year 3, Semester 2 - Load courses
+    ; Add courses for year 3, semester 2
+    ret
+
+fourth_sem_1:
+    ; Year 4, Semester 1 - Load courses
+    ; Add courses for year 4, semester 1
+    ret
+
+fourth_sem_2:
+    ; Year 4, Semester 2 - Load courses
+    ; Add courses for year 4, semester 2
+    ret
+
 EnlistCourses ENDP
+
