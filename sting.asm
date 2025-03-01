@@ -10,6 +10,7 @@ includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\masm32.lib
 
 include helper\set_courses.inc
+include helper\enlist_courses.inc
 .data
     file_handle HANDLE ?
     file_contents db 100000 dup(?)
@@ -42,8 +43,9 @@ include helper\set_courses.inc
     second_sem2_arr DWORD 8 DUP(0)
     third_sem1_arr DWORD 7 DUP(0)
     third_sem2_arr DWORD 6 DUP(0)
-    fourth_Sem1_arr DWORD 5 DUP(0)
+    fourth_sem1_arr DWORD 5 DUP(0)
     fourth_sem2_arr DWORD 2 DUP(0)
+
     
 .data?
     fname db 100 dup(?)
@@ -53,7 +55,10 @@ include helper\set_courses.inc
     sem db 4 dup(?)
     _course db 4 dup(?)
     _input db 4 dup(?)
-
+    year_num db ?
+    sem_num db ?
+    course_num db ?
+    array_ptr dd ?
 .code
 start:    
     invoke ClearScreen
@@ -98,13 +103,125 @@ enlist:
     .if _course == '0'
         jmp main_menu
     .endif
-    invoke EnlistCourse, sem, year, _course
+
+    mov al, [year]
+    sub al, '0'
+    mov year_num, al
+
+    ; Convert sem input to integer
+    mov al, [sem]
+    sub al, '0'
+    mov sem_num, al
+
+    ; Determine the correct array based on year and sem
+    movzx eax, year_num
+    movzx ebx, sem_num
+    lea edi, first_sem1_arr
+    .if eax == 1
+        .if ebx == 1
+            lea edi, first_sem1_arr
+        .elseif ebx == 2
+            lea edi, first_sem2_arr
+        .endif
+    .elseif eax == 2
+        .if ebx == 1
+            lea edi, second_sem1_arr
+        .elseif ebx == 2
+            lea edi, second_sem2_arr
+        .endif
+    .elseif eax == 3
+        .if ebx == 1
+            lea edi, third_sem1_arr
+        .elseif ebx == 2
+            lea edi, third_sem2_arr
+        .endif
+    .elseif eax == 4
+        .if ebx == 1
+            lea edi, fourth_sem1_arr
+        .elseif ebx == 2
+            lea edi, fourth_sem2_arr
+        .endif
+    .endif
+    mov array_ptr, edi
+        ; Read course number and convert to integer
+    mov al, [_course]
+    sub al, '0'
+    mov course_num, al
+
+    ; Enlist the course
+    invoke EnlistCourse, year_num, sem_num, course_num, array_ptr
+    jmp enlist
     jmp enlist
 .elseif menu =='3'
-    invoke ExitProcess, 0
+invoke StdOut, addr _first_year
+    invoke StdOut, addr _second_year
+    invoke StdOut, addr _third_year
+    invoke StdOut, addr _fourth_year
+    invoke StdOut, addr _msg1
+    invoke StdIn, addr year, 4
+
+    ; Get semester input
+    invoke StdOut, addr _first_sem
+    invoke StdOut, addr _second_sem
+    invoke StdOut, addr _msg2
+    invoke StdIn, addr sem, 4
+
+    ; Convert to numbers
+    mov al, [year]
+    sub al, '0'
+    mov year_num, al
+    mov al, [sem]
+    sub al, '0'
+    mov sem_num, al
+
+    ; Determine array and size
+    movzx eax, year_num
+    movzx ebx, sem_num
+    lea edi, first_sem1_arr
+    mov ecx, 8  ; Default size
+
+    .if eax == 1
+        .if ebx == 1
+            lea edi, first_sem1_arr
+            mov ecx, 8
+        .elseif ebx == 2
+            lea edi, first_sem2_arr
+            mov ecx, 8
+        .endif
+    .elseif eax == 2
+        .if ebx == 1
+            lea edi, second_sem1_arr
+            mov ecx, 8
+        .elseif ebx == 2
+            lea edi, second_sem2_arr
+            mov ecx, 8
+        .endif
+    .elseif eax == 3
+        .if ebx == 1
+            lea edi, third_sem1_arr
+            mov ecx, 7
+        .elseif ebx == 2
+            lea edi, third_sem2_arr
+            mov ecx, 6
+        .endif
+    .elseif eax == 4
+        .if ebx == 1
+            lea edi, fourth_sem1_arr
+            mov ecx, 5
+        .elseif ebx == 2
+            lea edi, fourth_sem2_arr
+            mov ecx, 2
+        .endif
+    .endif
+
+    ; Show courses
+    invoke DisplayCourses, edi, ecx
+    jmp main_menu
 .elseif menu == '4'
     invoke ExitProcess, 0
 .endif
     jmp main_menu
     invoke ExitProcess, 0
+
+
 end start

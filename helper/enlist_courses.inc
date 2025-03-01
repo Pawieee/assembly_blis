@@ -1,4 +1,4 @@
-include save_courses.inc
+;include save_courses.inc
 
 .data
     course111 db "GE 15", 0
@@ -53,11 +53,108 @@ include save_courses.inc
     course415 db "LIS 412", 0
     course421 db "LIS 421", 0
     course422 db "LIS 422", 0
+    
+    newLine         db 10, 0
+    return_prompt   db "Press Enter to return to main menu...", 10, 0
+
+    courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
+                DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
+                DWORD OFFSET course211, OFFSET course212, OFFSET course213, OFFSET course214, OFFSET course215, OFFSET course216, OFFSET course217, OFFSET course218
+                DWORD OFFSET course221, OFFSET course222, OFFSET course223, OFFSET course224, OFFSET course225, OFFSET course226, OFFSET course227, OFFSET course228
+                DWORD OFFSET course311, OFFSET course312, OFFSET course313, OFFSET course314, OFFSET course315, OFFSET course316, OFFSET course317
+                DWORD OFFSET course321, OFFSET course322, OFFSET course323, OFFSET course324, OFFSET course325, OFFSET course326
+                DWORD OFFSET course411, OFFSET course412, OFFSET course413, OFFSET course414, OFFSET course415
+                DWORD OFFSET course421, OFFSET course422
+
+.data?
+    _inputs db 4 dup(?)
 
 .code
-EnlistCourses PROC sem:BYTE, year:BYTE, course BYTE, arr:DWORD
-    Lea eax, course
-    mov arr[0], eax
+EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD
+    LOCAL start_index:DWORD
+    mov start_index, 0
+    movzx eax, year_num
+    movzx ebx, sem_num
 
+    .if eax == 1
+        .if ebx == 1
+            mov start_index, 0
+        .else
+            mov start_index, 8
+        .endif
+    .elseif eax == 2
+        .if ebx == 1
+            mov start_index, 16
+        .else
+            mov start_index, 24
+        .endif
+    .elseif eax == 3
+        .if ebx == 1
+            mov start_index, 32
+        .else
+            mov start_index, 39
+        .endif
+    .elseif eax == 4
+        .if ebx == 1
+            mov start_index, 45
+        .else
+            mov start_index, 50
+        .endif
+    .endif
+
+    movzx ecx, course_num
+    dec ecx
+    add start_index, ecx
+
+    mov eax, start_index
+    shl eax, 2
+    mov esi, offset courseTable
+    add esi, eax
+    mov edx, [esi]
+
+    movzx ecx, course_num
+    dec ecx
+    shl ecx, 2
+    mov edi, arr
+    add edi, ecx
+    mov [edi], edx
+
+    ;invoke StdOut, addr course111
     ret
-EnlistCourses ENDP
+EnlistCourse endp
+
+DisplayCourses proc array_ptr:DWORD, element_count:DWORD
+    pushad              ; Save all registers
+    mov esi, array_ptr  ; Array pointer
+    mov ecx, element_count ; Element count
+    xor edx, edx        ; Index counter
+
+print_loop:
+    cmp edx, ecx        ; Check if index >= count
+    jge done_printing
+
+    ; Get current element
+    mov eax, [esi + edx*4]
+    test eax, eax       ; Check if element is 0
+    jz skip_print
+
+    ; Print course name
+    push edx            ; Preserve index
+    push ecx            ; Preserve counter
+    invoke StdOut, eax
+    invoke StdOut, addr newline
+    pop ecx             ; Restore counter
+    pop edx             ; Restore index
+
+skip_print:
+    inc edx             ; Next index
+    jmp print_loop
+
+done_printing:
+    ; Return to menu prompt
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+
+    popad               ; Restore registers
+    ret
+DisplayCourses endp
