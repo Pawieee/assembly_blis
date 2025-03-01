@@ -1,5 +1,3 @@
-;include save_courses.inc
-
 .data
     course111 db "GE 15", 0
     course112 db "LIS 121", 0

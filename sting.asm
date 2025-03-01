@@ -75,8 +75,9 @@ main_menu:
     invoke StdIn, addr menu, 3
 
 .if menu == '1'
-    invoke lstrcat, addr file_loc, addr prospec
-    invoke ReadFileProc, addr file_loc
+
+    ;invoke lstrcat, addr file_loc, addr prospec
+    invoke ReadFileProc, addr prospec
 .elseif menu == '2'
 enlist:
     invoke StdOut, addr _first_year
@@ -150,8 +151,7 @@ enlist:
 
     ; Enlist the course
     invoke EnlistCourse, year_num, sem_num, course_num, array_ptr
-    jmp enlist
-    jmp enlist
+    jmp main_menu
 .elseif menu =='3'
 invoke StdOut, addr _first_year
     invoke StdOut, addr _second_year
