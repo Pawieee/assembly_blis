@@ -25,13 +25,13 @@ include helper\enlist_courses.inc
     _menu4 db "[4] Exit", 10,0
 
     _msg1 db "Choose Year: ", 0
-    _first_year db "[1] 1st Year", 10,0
+    _first_year db 10,"[1] 1st Year", 10,0
     _second_year db "[2] 2nd Year", 10,0
     _third_year db "[3] 3rd Year", 10,0
     _fourth_year db "[4] 4th Year", 10,0
 
     _msg2 db "Choose Semester: ", 0
-    _first_sem db "[1] 1st Semester", 10,0
+    _first_sem db 10,"[1] 1st Semester", 10,0
     _second_sem db "[2] 2nd Semester", 10,0
 
     prospec db "base\\prospectus.txt", 0
