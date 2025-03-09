@@ -56,6 +56,9 @@
     return_prompt   db "Press Enter to return to main menu...", 10, 0
     totalMsg   db "Total Units: ", 0
 
+    success_msg   db "Course enlisted successfully!", 13, 10, 0
+    duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
+
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
                 DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
                 DWORD OFFSET course211, OFFSET course212, OFFSET course213, OFFSET course214, OFFSET course215, OFFSET course216, OFFSET course217, OFFSET course218
@@ -126,6 +129,10 @@ EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total
     shl ecx, 2
     mov edi, arr
     add edi, ecx
+
+    cmp dword ptr [edi], 0     ; Check if slot is empty
+    jne already_enlisted 
+
     mov [edi], edx
 
     mov esi, offset unitTable
@@ -135,11 +142,14 @@ EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total
     ; Update total units
     mov edi, total_ptr
     add byte ptr [edi], al  ; Add unit to total
+    jmp done
+    invoke StdOut, addr success_msg
 
-    invoke dwtoa, eax, addr tempBuffer  ; Convert to string
-    invoke StdOut, addr tempBuffer      ; Print the number
-    invoke StdOut, addr newline         ; Print a newline
+already_enlisted:
+    ; Print error message
+    invoke StdOut, addr duplicate_msg
 
+done:
     ret
 EnlistCourse endp
 
@@ -172,14 +182,14 @@ skip_print:
 
 done_printing:
     ; Print total units
-    invoke StdOut, addr newline      ; Add spacing
-    invoke StdOut, addr totalMsg     ; "Total Units: "
+    invoke StdOut, addr newline
+    invoke StdOut, addr totalMsg
     
     mov edi, total_ptr              ; Load total pointer
     movzx eax, byte ptr [edi]       ; Get total value (0-255)
-    invoke dwtoa, eax, addr tempBuffer ; Convert to string
-    invoke StdOut, addr tempBuffer  ; Print the number
-    invoke StdOut, addr newline     ; Newline
+    invoke dwtoa, eax, addr tempBuffer
+    invoke StdOut, addr tempBuffer
+    invoke StdOut, addr newline
 
     ; Return to menu prompt
     invoke StdOut, addr return_prompt
