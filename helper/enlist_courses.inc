@@ -54,6 +54,7 @@
     
     newLine         db 10, 0
     return_prompt   db "Press Enter to return to main menu...", 10, 0
+    totalMsg   db "Total Units: ", 0
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
                 DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
@@ -64,11 +65,21 @@
                 DWORD OFFSET course411, OFFSET course412, OFFSET course413, OFFSET course414, OFFSET course415
                 DWORD OFFSET course421, OFFSET course422
 
+    unitTable   BYTE 3, 3, 6, 3, 3, 3, 2, 3
+                BYTE 6, 3, 3, 3, 3, 3, 2, 3
+                BYTE 3, 3, 3, 3, 3, 3, 3, 2
+                BYTE 3, 3, 3, 3, 3, 3, 3, 2
+                BYTE 3, 3, 3, 3, 3, 3, 3
+                BYTE 3, 3, 3, 3, 3, 3
+                BYTE 3, 3, 3, 3, 3
+                BYTE 5, 5
+
 .data?
     _inputs db 4 dup(?)
+    tempBuffer db 16 dup(?)
 
 .code
-EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD
+EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total_ptr:DWORD
     LOCAL start_index:DWORD
     mov start_index, 0
     movzx eax, year_num
@@ -117,11 +128,22 @@ EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD
     add edi, ecx
     mov [edi], edx
 
-    ;invoke StdOut, addr course111
+    mov esi, offset unitTable
+    mov eax, start_index
+    mov al, [esi + eax]  ; AL = course unit
+
+    ; Update total units
+    mov edi, total_ptr
+    add byte ptr [edi], al  ; Add unit to total
+
+    invoke dwtoa, eax, addr tempBuffer  ; Convert to string
+    invoke StdOut, addr tempBuffer      ; Print the number
+    invoke StdOut, addr newline         ; Print a newline
+
     ret
 EnlistCourse endp
 
-DisplayCourses proc array_ptr:DWORD, element_count:DWORD
+DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD
     pushad              ; Save all registers
     mov esi, array_ptr  ; Array pointer
     mov ecx, element_count ; Element count
@@ -149,6 +171,16 @@ skip_print:
     jmp print_loop
 
 done_printing:
+    ; Print total units
+    invoke StdOut, addr newline      ; Add spacing
+    invoke StdOut, addr totalMsg     ; "Total Units: "
+    
+    mov edi, total_ptr              ; Load total pointer
+    movzx eax, byte ptr [edi]       ; Get total value (0-255)
+    invoke dwtoa, eax, addr tempBuffer ; Convert to string
+    invoke StdOut, addr tempBuffer  ; Print the number
+    invoke StdOut, addr newline     ; Newline
+
     ; Return to menu prompt
     invoke StdOut, addr return_prompt
     invoke StdIn, addr _inputs, 4

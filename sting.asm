@@ -46,6 +46,14 @@ include helper\enlist_courses.inc
     fourth_sem1_arr DWORD 5 DUP(0)
     fourth_sem2_arr DWORD 2 DUP(0)
 
+    first_sem1_total db 0
+    first_sem2_total db 0
+    second_sem1_total db 0
+    second_sem2_total db 0
+    third_sem1_total db 0
+    third_sem2_total db 0
+    fourth_sem1_total db 0
+    fourth_sem2_total db 0
     
 .data?
     fname db 100 dup(?)
@@ -118,29 +126,38 @@ enlist:
     movzx eax, year_num
     movzx ebx, sem_num
     lea edi, first_sem1_arr
+    Lea esi, first_sem1_total
     .if eax == 1
         .if ebx == 1
             lea edi, first_sem1_arr
+            Lea esi, first_sem1_total
         .elseif ebx == 2
             lea edi, first_sem2_arr
+            Lea esi, first_sem2_total
         .endif
     .elseif eax == 2
         .if ebx == 1
             lea edi, second_sem1_arr
+            Lea esi, second_sem1_total
         .elseif ebx == 2
             lea edi, second_sem2_arr
+            Lea esi, second_sem2_total
         .endif
     .elseif eax == 3
         .if ebx == 1
             lea edi, third_sem1_arr
+            Lea esi, third_sem1_total
         .elseif ebx == 2
             lea edi, third_sem2_arr
+            Lea esi, third_sem2_total
         .endif
     .elseif eax == 4
         .if ebx == 1
             lea edi, fourth_sem1_arr
+            Lea esi, fourth_sem1_total
         .elseif ebx == 2
             lea edi, fourth_sem2_arr
+            Lea esi, fourth_sem2_total
         .endif
     .endif
     mov array_ptr, edi
@@ -150,7 +167,7 @@ enlist:
     mov course_num, al
 
     ; Enlist the course
-    invoke EnlistCourse, year_num, sem_num, course_num, array_ptr
+    invoke EnlistCourse, year_num, sem_num, course_num, array_ptr, esi
     jmp main_menu
 .elseif menu =='3'
 invoke StdOut, addr _first_year
@@ -178,44 +195,53 @@ invoke StdOut, addr _first_year
     movzx eax, year_num
     movzx ebx, sem_num
     lea edi, first_sem1_arr
+    Lea esi, first_sem1_total
     mov ecx, 8  ; Default size
 
     .if eax == 1
         .if ebx == 1
             lea edi, first_sem1_arr
+            Lea esi, first_sem1_total
             mov ecx, 8
         .elseif ebx == 2
             lea edi, first_sem2_arr
+            Lea esi, first_sem2_total
             mov ecx, 8
         .endif
     .elseif eax == 2
         .if ebx == 1
             lea edi, second_sem1_arr
+            Lea esi, second_sem1_total
             mov ecx, 8
         .elseif ebx == 2
             lea edi, second_sem2_arr
+            Lea esi, second_sem2_total
             mov ecx, 8
         .endif
     .elseif eax == 3
         .if ebx == 1
             lea edi, third_sem1_arr
+            Lea esi, third_sem1_total
             mov ecx, 7
         .elseif ebx == 2
             lea edi, third_sem2_arr
+            Lea esi, third_sem2_total
             mov ecx, 6
         .endif
     .elseif eax == 4
         .if ebx == 1
             lea edi, fourth_sem1_arr
+            Lea esi, fourth_sem1_total
             mov ecx, 5
         .elseif ebx == 2
             lea edi, fourth_sem2_arr
+            Lea esi, fourth_sem2_total
             mov ecx, 2
         .endif
     .endif
 
     ; Show courses
-    invoke DisplayCourses, edi, ecx
+    invoke DisplayCourses, edi, ecx, esi
     jmp main_menu
 .elseif menu == '4'
     invoke ExitProcess, 0
