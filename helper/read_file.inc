@@ -8,7 +8,6 @@
 
 .CODE
 ReadFileProc PROC filename:DWORD
-    ; fileHandle: holds the actual contents of the file
     LOCAL fileHandle:DWORD
 
     ; Opens the file, storing the file in the eax register

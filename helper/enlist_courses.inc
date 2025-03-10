@@ -53,11 +53,22 @@
     course422 db "LIS 422", 0
     
     newLine         db 10, 0
-    return_prompt   db "Press Enter to return to main menu...", 10, 0
+    return_prompt   db "Press 'Enter' key to continue...", 10, 0
     totalMsg   db "Total Units: ", 0
 
     success_msg   db "Course enlisted successfully!", 13, 10, 0
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
+
+    headLine db "+-------------------------+", 0
+    gridLine db "+---------------+---------+", 0
+    first_sem1 db "| 1ST YEAR - 1ST SEMESTER |", 0
+    first_sem2 db "| 1ST YEAR - 2ND SEMESTER |", 0
+    second_sem1 db "| 2ND YEAR - 1ST SEMESTER |", 0
+    second_sem2 db "| 2ND YEAR - 2ND SEMESTER |", 0 
+    third_sem1 db "| 3RD YEAR - 1ST SEMESTER |", 0
+    third_sem2 db "| 3RD YEAR - 2ND SEMESTER |", 0
+    fourth_sem1 db "| 4TH YEAR - 1ST SEMESTER |", 0
+    fourth_sem2 db "| 4TH YEAR - 2ND SEMESTER |", 0
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
                 DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
@@ -130,7 +141,8 @@ EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total
     mov edi, arr
     add edi, ecx
 
-    cmp dword ptr [edi], 0     ; Check if slot is empty
+    ;Handle already enlisted courses
+    cmp dword ptr [edi], 0
     jne already_enlisted 
 
     mov [edi], edx
@@ -142,8 +154,8 @@ EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total
     ; Update total units
     mov edi, total_ptr
     add byte ptr [edi], al  ; Add unit to total
-    jmp done
     invoke StdOut, addr success_msg
+    jmp done
 
 already_enlisted:
     ; Print error message
@@ -154,6 +166,8 @@ done:
 EnlistCourse endp
 
 DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD
+    invoke StdOut, addr newLine
+    invoke StdOut, addr gridLine
     pushad              ; Save all registers
     mov esi, array_ptr  ; Array pointer
     mov ecx, element_count ; Element count
@@ -198,3 +212,9 @@ done_printing:
     popad               ; Restore registers
     ret
 DisplayCourses endp
+
+;+-------------------------+
+;| 1ST YEAR - 1ST SEMESTER |
+;+---------------+---------+
+;|   Subj Code   |  Units  |
+;+---------------+---------+

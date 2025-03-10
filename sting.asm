@@ -11,6 +11,7 @@ includelib \masm32\lib\masm32.lib
 
 include helper\set_courses.inc
 include helper\enlist_courses.inc
+
 .data
     file_handle HANDLE ?
     file_contents db 100000 dup(?)
@@ -36,6 +37,7 @@ include helper\enlist_courses.inc
 
     prospec db "base\\prospectus.txt", 0
     
+    _prompt db 10, "Enlist another course? [Y/N] ", 0
     _enlist db 10, "Enlist course: ", 0
     first_sem1_arr DWORD 8 DUP(0)
     first_sem2_arr DWORD 8 DUP(0)
@@ -83,8 +85,6 @@ main_menu:
     invoke StdIn, addr menu, 3
 
 .if menu == '1'
-
-    ;invoke lstrcat, addr file_loc, addr prospec
     invoke ReadFileProc, addr prospec
 .elseif menu == '2'
 enlist:
@@ -96,7 +96,6 @@ enlist:
 
     invoke RtlZeroMemory, addr year, 4
     invoke StdIn, addr year, 4
-
 
     invoke StdOut, addr _first_sem
     invoke StdOut, addr _second_sem
@@ -161,16 +160,26 @@ enlist:
         .endif
     .endif
     mov array_ptr, edi
-        ; Read course number and convert to integer
+    ; Read course number and convert to integer
     mov al, [_course]
     sub al, '0'
     mov course_num, al
 
     ; Enlist the course
     invoke EnlistCourse, year_num, sem_num, course_num, array_ptr, esi
-    jmp main_menu
+
+    invoke StdOut, addr _prompt
+    invoke RtlZeroMemory,addr _input, SIZEOF _input
+    invoke StdIn, addr _input, 4
+
+    .if _input == 'Y' || _input == 'y'
+        jmp enlist
+    .elseif _input == 'N' || _input == 'n'
+        jmp main_menu
+    .endif
+        
 .elseif menu =='3'
-invoke StdOut, addr _first_year
+    invoke StdOut, addr _first_year
     invoke StdOut, addr _second_year
     invoke StdOut, addr _third_year
     invoke StdOut, addr _fourth_year
