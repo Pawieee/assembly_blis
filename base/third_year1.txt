@@ -27,4 +27,4 @@
 
                 [1] LIS 300         [3] MTH 119         [5] LIS 312        [7] LIS 314          
 
-                [2] LIS 228         [4] LIS 311         [6] LIS 313        [0] Return to menu
+                [2] LIS 228         [4] LIS 311         [6] LIS 313/L      [0] Return to menu
