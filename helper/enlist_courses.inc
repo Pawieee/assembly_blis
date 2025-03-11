@@ -24,7 +24,7 @@
     course217 db "LIS 220", 0
     course218 db "PAHF 3", 0
     course221 db "GE 6", 0
-    course222 db "l 2", 0
+    course222 db "UGE 2", 0
     course223 db "GE 5", 0
     course224 db "LIS 223", 0
     course225 db "LIS 224", 0
@@ -60,27 +60,27 @@
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
 
     course_bar1 db 124,9,0
-    course_bar1a db 9,32,32,32,124,32,32,32,32, 0
-    course_bar1b db 9,32,32,32,124,9,32,32,0
-    course_bar2 db 9,9,124,9,32,32,0
-    course_bar2a db 32,32,32,124,9,32,32,32,32,0
+    course_bar1a db 124,9,9,0
+    course_bar1b db 124,9,9,0
+    course_bar2 db 9,9,9,124,9,0
+    course_bar_2 db 9,9,124,9,0
+    course_bar2a db 9,9,124,9,0
     course_bar3 db 9,32,32,32,124,0
 
     
-    headLine db 9,32,32,32,"+---------------------------------+",10, 0
-    gridLine db 9,32,32,32,"+------------------+--------------+", 10,0
-    first_sem1 db 9,32,32,32,"|     1ST YEAR - 1ST SEMESTER     |", 10,0
-    first_sem2 db 9,32,32,32,"|     1ST YEAR - 2ND SEMESTER     |", 10,0
-    second_sem1 db 9,32,32,32,"|     2ND YEAR - 1ST SEMESTER     |", 10,0
-    second_sem2 db 9,32,32,32,"|     2ND YEAR - 2ND SEMESTER     |", 10,0 
-    third_sem1 db 9,32,32,32,"|     3RD YEAR - 1ST SEMESTER     |", 10,0
-    third_sem2 db 9,32,32,32,"|     3RD YEAR - 2ND SEMESTER     |", 10,0
-    fourth_sem1 db 9,32,32,32,"|     4TH YEAR - 1ST SEMESTER     |", 10,0
-    fourth_sem2 db 9,32,32,32,"|     4TH YEAR - 2ND SEMESTER     |", 10,0
+    gridLine db "+---------------------------------------+------------------+", 10,0
+    first_sem1 db "|                 1ST YEAR - 1ST SEMESTER                  |", 10,0
+    first_sem2 db "|                 1ST YEAR - 2ND SEMESTER                  |", 10,0
+    second_sem1 db "|                 2ND YEAR - 1ST SEMESTER                  |", 10,0
+    second_sem2 db "|                 2ND YEAR - 2ND SEMESTER                  |", 10,0 
+    third_sem1 db "|                 3RD YEAR - 1ST SEMESTER                  |", 10,0
+    third_sem2 db "|                 3RD YEAR - 2ND SEMESTER                  |", 10,0
+    fourth_sem1 db "|                 4TH YEAR - 1ST SEMESTER                  |", 10,0
+    fourth_sem2 db "|                 4TH YEAR - 2ND SEMESTER                  |", 10,0
 
-    column_headers db 9,32,32,32,"|    Subj Code     |     Units    |", 10,0
+    column_headers db "|              Subj Code                |       Units      |", 10,0
 
-    base_gridlines db "+----------------------------------------------------------+", 10,0
+    base_gridlines db "+----------------------------------------------------------+", 10,0   
     college db 9,"COLLEGE OF COMPUTING EDUCATION",9,0
     program db "BACHELOR OF LIBRARY AND INFORMATION SCIENCE",0
     enrolled_txt db 9,32,32,32,"Enrolled Courses",9,9,0
@@ -203,7 +203,7 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
     invoke StdOut, addr base_gridlines
     invoke StdOut, addr newLine
 
-    invoke StdOut, addr headLine
+    invoke StdOut, addr base_gridlines
 
     .if year == 1 && sem == 1
         invoke StdOut, addr first_sem1
@@ -298,7 +298,15 @@ found_course:
     ; Print formatted line
     invoke StdOut, addr course_bar1b
     invoke StdOut, addr tempCourseBuffer
+
+    invoke lstrlen, addr tempCourseBuffer 
+    cmp eax, 9           ; Compare course name length with 12
+    jge use_single_tab 
     invoke StdOut, addr course_bar2
+    jmp print_course
+use_single_tab:
+    invoke StdOut, addr course_bar_2
+print_course:
     invoke StdOut, addr tempBuffer
     invoke StdOut, addr course_bar3
     invoke StdOut, addr newLine
