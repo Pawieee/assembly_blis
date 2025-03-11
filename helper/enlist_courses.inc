@@ -62,9 +62,9 @@
     course_bar1 db 124,9,0
     course_bar1a db 124,9,9,0
     course_bar1b db 124,9,9,0
-    course_bar2 db 9,9,9,124,9,0
-    course_bar_2 db 9,9,124,9,0
-    course_bar2a db 9,9,124,9,0
+    course_bar2 db 9,9,9,124,9,32,32,0
+    course_bar_2 db 9,9,124,9,32,32,0
+    course_bar2a db 9,9,124,9,32,32,0
     course_bar3 db 9,32,32,32,124,0
 
     
@@ -84,6 +84,9 @@
     college db 9,"COLLEGE OF COMPUTING EDUCATION",9,0
     program db "BACHELOR OF LIBRARY AND INFORMATION SCIENCE",0
     enrolled_txt db 9,32,32,32,"Enrolled Courses",9,9,0
+    tempspace db 9,9,0
+    tempspace2 db 9,0
+    namespace db " - ",0
 
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
@@ -182,7 +185,7 @@ done:
     ret
 EnlistCourse endp
 
-DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:BYTE, sem:BYTE
+DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:BYTE, sem:BYTE, namePtr:DWORD, idPtr:DWORD
     LOCAL start_index:DWORD 
     invoke StdOut, addr newLine
     invoke StdOut, addr base_gridlines
@@ -193,6 +196,15 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
     invoke StdOut, addr base_gridlines
     invoke StdOut, addr course_bar1
     invoke StdOut, addr program
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr base_gridlines
+    invoke StdOut, addr course_bar1
+    invoke StdOut, addr tempspace
+    invoke StdOut, namePtr
+    invoke StdOut, addr namespace
+    invoke StdOut, idPtr
+    invoke StdOut, addr tempspace2   
     invoke StdOut, addr course_bar3
     invoke StdOut, addr newLine
     invoke StdOut, addr base_gridlines
