@@ -60,24 +60,30 @@
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
 
     course_bar1 db 124,9,0
-    course_bar1a db 124,32,32,32,32, 0
-    course_bar2 db 9,32,32,32,179,9,32,32,0
-    course_bar2a db 32,32,32,179,9,32,32,0
-    course_bar3 db 9,32,32,179,0
+    course_bar1a db 9,32,32,32,124,32,32,32,32, 0
+    course_bar1b db 9,32,32,32,124,9,32,32,0
+    course_bar2 db 9,9,124,9,32,32,0
+    course_bar2a db 32,32,32,124,9,32,32,32,32,0
+    course_bar3 db 9,32,32,32,124,0
 
     
-    headLine db "+---------------------------------+",10, 0
-    gridLine db "+------------------+--------------+", 10,0
-    first_sem1 db "|     1ST YEAR - 1ST SEMESTER     |", 10,0
-    first_sem2 db "|     1ST YEAR - 2ND SEMESTER     |", 10,0
-    second_sem1 db "|     2ND YEAR - 1ST SEMESTER     |", 10,0
-    second_sem2 db "|     2ND YEAR - 2ND SEMESTER     |", 10,0 
-    third_sem1 db "|     3RD YEAR - 1ST SEMESTER     |", 10,0
-    third_sem2 db "|     3RD YEAR - 2ND SEMESTER     |", 10,0
-    fourth_sem1 db "|     4TH YEAR - 1ST SEMESTER     |", 10,0
-    fourth_sem2 db "|     4TH YEAR - 2ND SEMESTER     |", 10,0
+    headLine db 9,32,32,32,"+---------------------------------+",10, 0
+    gridLine db 9,32,32,32,"+------------------+--------------+", 10,0
+    first_sem1 db 9,32,32,32,"|     1ST YEAR - 1ST SEMESTER     |", 10,0
+    first_sem2 db 9,32,32,32,"|     1ST YEAR - 2ND SEMESTER     |", 10,0
+    second_sem1 db 9,32,32,32,"|     2ND YEAR - 1ST SEMESTER     |", 10,0
+    second_sem2 db 9,32,32,32,"|     2ND YEAR - 2ND SEMESTER     |", 10,0 
+    third_sem1 db 9,32,32,32,"|     3RD YEAR - 1ST SEMESTER     |", 10,0
+    third_sem2 db 9,32,32,32,"|     3RD YEAR - 2ND SEMESTER     |", 10,0
+    fourth_sem1 db 9,32,32,32,"|     4TH YEAR - 1ST SEMESTER     |", 10,0
+    fourth_sem2 db 9,32,32,32,"|     4TH YEAR - 2ND SEMESTER     |", 10,0
 
-    column_headers db "|    Subj Code     |     Units    |", 10,0
+    column_headers db 9,32,32,32,"|    Subj Code     |     Units    |", 10,0
+
+    base_gridlines db "+----------------------------------------------------------+", 10,0
+    college db 9,"COLLEGE OF COMPUTING EDUCATION",9,0
+    program db "BACHELOR OF LIBRARY AND INFORMATION SCIENCE",0
+    enrolled_txt db 9,32,32,32,"Enrolled Courses",9,9,0
 
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
@@ -179,6 +185,24 @@ EnlistCourse endp
 DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:BYTE, sem:BYTE
     LOCAL start_index:DWORD 
     invoke StdOut, addr newLine
+    invoke StdOut, addr base_gridlines
+    invoke StdOut, addr course_bar1
+    invoke StdOut, addr college
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr base_gridlines
+    invoke StdOut, addr course_bar1
+    invoke StdOut, addr program
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr base_gridlines
+    invoke StdOut, addr course_bar1
+    invoke StdOut, addr enrolled_txt
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr base_gridlines
+    invoke StdOut, addr newLine
+
     invoke StdOut, addr headLine
 
     .if year == 1 && sem == 1
@@ -198,6 +222,8 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
     .elseif year == 4 && sem == 2
         invoke StdOut, addr fourth_sem2
     .endif
+
+
 
     invoke StdOut, addr gridLine
     invoke StdOut, addr column_headers
@@ -270,7 +296,7 @@ found_course:
     invoke dwtoa, eax, addr tempBuffer
 
     ; Print formatted line
-    invoke StdOut, addr course_bar1
+    invoke StdOut, addr course_bar1b
     invoke StdOut, addr tempCourseBuffer
     invoke StdOut, addr course_bar2
     invoke StdOut, addr tempBuffer
