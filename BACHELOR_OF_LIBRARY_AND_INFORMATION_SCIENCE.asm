@@ -78,6 +78,7 @@ include helper\enlist_courses.inc
 start:    
     invoke ClearScreen
 name_input:
+    invoke ClearScreen
     invoke StdOut, addr _name
     invoke StdIn, addr fname, 100
     call validate_name
@@ -85,6 +86,7 @@ name_input:
     je name_input  ; If invalid, re-prompt for name
 
 id_input:
+    invoke ClearScreen
     invoke StdOut, addr _id
     invoke StdIn, addr id, 100
     call validate_id
