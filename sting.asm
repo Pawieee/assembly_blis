@@ -88,6 +88,8 @@ main_menu:
 .if menu == '1'
     invoke ClearScreen
     invoke ReadFileProc, addr prospec
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _input, 4
 .elseif menu == '2'
 enlist:
     invoke ClearScreen
@@ -184,78 +186,71 @@ enlist:
         
 .elseif menu =='3'
     invoke ClearScreen
-    invoke StdOut, addr _first_year
-    invoke StdOut, addr _second_year
-    invoke StdOut, addr _third_year
-    invoke StdOut, addr _fourth_year
-    invoke StdOut, addr _msg1
-    invoke StdIn, addr year, 4
+    mov year_num, 1  ; Start from 1st Year
 
-    ; Get semester input
-    invoke StdOut, addr _first_sem
-    invoke StdOut, addr _second_sem
-    invoke StdOut, addr _msg2
-    invoke StdIn, addr sem, 4
+year_loop:
+    mov sem_num, 1  ; Start from 1st Semester
 
-    ; Convert to numbers
-    mov al, [year]
-    sub al, '0'
-    mov year_num, al
-    mov al, [sem]
-    sub al, '0'
-    mov sem_num, al
-
-    ; Determine array and size
+sem_loop:
+    ; Set corresponding array and size
     movzx eax, year_num
     movzx ebx, sem_num
-    lea edi, first_sem1_arr
-    Lea esi, first_sem1_total
-    mov ecx, 8  ; Default size
 
     .if eax == 1
         .if ebx == 1
             lea edi, first_sem1_arr
-            Lea esi, first_sem1_total
+            lea esi, first_sem1_total
             mov ecx, 8
         .elseif ebx == 2
             lea edi, first_sem2_arr
-            Lea esi, first_sem2_total
+            lea esi, first_sem2_total
             mov ecx, 8
         .endif
     .elseif eax == 2
         .if ebx == 1
             lea edi, second_sem1_arr
-            Lea esi, second_sem1_total
+            lea esi, second_sem1_total
             mov ecx, 8
         .elseif ebx == 2
             lea edi, second_sem2_arr
-            Lea esi, second_sem2_total
+            lea esi, second_sem2_total
             mov ecx, 8
         .endif
     .elseif eax == 3
         .if ebx == 1
             lea edi, third_sem1_arr
-            Lea esi, third_sem1_total
+            lea esi, third_sem1_total
             mov ecx, 7
         .elseif ebx == 2
             lea edi, third_sem2_arr
-            Lea esi, third_sem2_total
+            lea esi, third_sem2_total
             mov ecx, 6
         .endif
     .elseif eax == 4
         .if ebx == 1
             lea edi, fourth_sem1_arr
-            Lea esi, fourth_sem1_total
+            lea esi, fourth_sem1_total
             mov ecx, 5
         .elseif ebx == 2
             lea edi, fourth_sem2_arr
-            Lea esi, fourth_sem2_total
+            lea esi, fourth_sem2_total
             mov ecx, 2
         .endif
     .endif
 
-    ; Show courses
+    ; Show courses for this semester
     invoke DisplayCourses, edi, ecx, esi, year_num, sem_num
+    invoke ClearScreen
+
+    ; Increment semester
+    inc sem_num
+    cmp sem_num, 3
+    jl sem_loop  ; Loop until sem_num < 3 (i.e., 1st and 2nd sem)
+
+    ; Increment year
+    inc year_num
+    cmp year_num, 5
+    jl year_loop  ; Loop until year_num < 5 (i.e., 1st to 4th year)
     jmp main_menu
 .elseif menu == '4'
     invoke ExitProcess, 0

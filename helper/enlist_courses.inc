@@ -180,6 +180,7 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
     LOCAL start_index:DWORD 
     invoke StdOut, addr newLine
     invoke StdOut, addr headLine
+
     .if year == 1 && sem == 1
         invoke StdOut, addr first_sem1
     .elseif year == 1 && sem == 2
@@ -204,8 +205,33 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
 
     pushad              ; Save all registers
     mov esi, array_ptr  ; Array pointer
-    mov ecx, element_count ; Element count
+    mov ecx, element_count ; Total number of courses
     xor edx, edx        ; Index counter
+    xor eax, eax        ; Reset register
+
+    ; 🔹 Check if there is at least one non-zero entry in the array
+    mov ebx, 0          ; Flag to track if a course exists
+
+check_array_loop:
+    cmp edx, ecx        ; If edx >= ecx, we're done checking
+    jge check_done
+
+    mov eax, [esi + edx*4]  ; Load array value
+    test eax, eax           ; Check if it's non-zero
+    jnz course_found        ; If we find a valid course, skip to normal printing
+
+    inc edx                 ; Move to next index
+    jmp check_array_loop    ; Continue checking
+
+course_found:
+    mov ebx, 1              ; Set flag to indicate at least one course exists
+
+check_done:
+    cmp ebx, 0              ; If flag is still 0, no courses were found
+    je end_print        ; Skip printing if the array is empty
+
+    ; Reset index for actual printing
+    xor edx, edx
 
 print_loop:
     cmp edx, ecx        ; Check if index >= count
@@ -224,7 +250,6 @@ print_loop:
     invoke lstrcpyn, addr tempCourseBuffer, ebx, sizeof tempCourseBuffer
     pop eax             ; Restore course pointer
     
-
     ; Find course index in courseTable
     mov edi, offset courseTable
     mov ecx, 52         ; Total courses
@@ -281,5 +306,6 @@ done_printing:
     invoke StdIn, addr _inputs, 4
 
     popad               ; Restore registers
+end_print:
     ret
 DisplayCourses endp
