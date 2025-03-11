@@ -77,10 +77,19 @@ include helper\enlist_courses.inc
 .code
 start:    
     invoke ClearScreen
+name_input:
     invoke StdOut, addr _name
     invoke StdIn, addr fname, 100
+    call validate_name
+    cmp eax, 0
+    je name_input  ; If invalid, re-prompt for name
+
+id_input:
     invoke StdOut, addr _id
     invoke StdIn, addr id, 100
+    call validate_id
+    cmp eax, 0
+    je id_input  ; If invalid, re-prompt for ID
 main_menu:
 menu_input:
     invoke ClearScreen
@@ -301,6 +310,7 @@ proceed_enlist:
     invoke ClearScreen
     invoke EnlistCourse, year_num, sem_num, course_num, array_ptr, esi
 
+prompt:
     invoke StdOut, addr _prompt
     invoke RtlZeroMemory,addr _input, SIZEOF _input
     invoke StdIn, addr _input, 4
@@ -309,6 +319,9 @@ proceed_enlist:
         jmp enlist
     .elseif _input == 'N' || _input == 'n'
         jmp main_menu
+    .else
+        invoke ClearScreen
+        jmp prompt
     .endif
         
 .elseif menu =='3'
@@ -385,5 +398,89 @@ sem_loop:
     jmp main_menu
     invoke ExitProcess, 0
 
+validate_name PROC
+    mov edi, offset fname
+    mov ecx, 0      ; Counter to track if first character is checked
 
+check_name_loop:
+    mov al, byte ptr [edi]
+
+    cmp ecx, 0      ; Check only for the first character
+    je first_char_check
+
+    cmp al, 0       ; If null terminator is reached, it's valid
+    je name_valid
+
+    cmp al, 'A'
+    jb check_space
+    cmp al, 'Z'
+    jbe continue_loop
+    cmp al, 'a'
+    jb check_space
+    cmp al, 'z'
+    jbe continue_loop
+
+check_space:
+    cmp al, ' '     ; Spaces are allowed after the first character
+    je continue_loop
+
+name_invalid:
+    invoke StdOut, addr fname_invalid_msg
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+    mov eax, 0
+    ret
+
+first_char_check:
+    cmp al, 0       ; If the first character is null, reject input
+    je name_invalid
+    cmp al, ' '     ; If the first character is a space, reject input
+    je name_invalid
+    inc ecx         ; Mark first character checked
+    jmp continue_loop
+
+continue_loop:
+    inc edi
+    jmp check_name_loop
+
+name_valid:
+    mov eax, 1
+    ret
+
+validate_name ENDP
+
+
+
+validate_id PROC
+    mov edi, offset id
+    mov ecx, 0  ; Counter for ID length
+
+check_id_loop:
+    mov al, byte ptr [edi]
+    cmp al, 0
+    je check_id_length  ; If null terminator, check length
+
+    cmp al, '0'
+    jb id_invalid
+    cmp al, '9'
+    ja id_invalid
+
+    inc edi
+    inc ecx
+    jmp check_id_loop
+
+check_id_length:
+    cmp ecx, 6
+    jne id_invalid
+    mov eax, 1
+    ret
+
+id_invalid:
+    invoke StdOut, addr id_invalid_msg
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+    mov eax, 0
+    ret
+
+validate_id ENDP
 end start
