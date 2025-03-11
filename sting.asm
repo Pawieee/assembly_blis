@@ -20,6 +20,7 @@ include helper\enlist_courses.inc
     _name db "Enter your name: ",0
     _id db "Enter your ID: ",0
 
+    _msg0 db 10,"Enter menu option: ", 10,0
     _menu1 db 10,"[1] View Prospectus", 10,0
     _menu2 db "[2] Enroll Courses", 10,0
     _menu3 db "[3] View My Course", 10,0
@@ -39,6 +40,8 @@ include helper\enlist_courses.inc
     
     _prompt db 10, "Enlist another course? [Y/N] ", 0
     _enlist db 10, "Enlist course: ", 0
+    _invalid_course_msg db 10, "Invalid input. Please try again.", 10,0
+
     first_sem1_arr DWORD 8 DUP(0)
     first_sem2_arr DWORD 8 DUP(0)
     second_sem1_arr DWORD 8 DUP(0)
@@ -78,12 +81,20 @@ start:
     invoke StdOut, addr _id
     invoke StdIn, addr id, 100
 main_menu:
+menu_input:
     invoke ClearScreen
     invoke StdOut, addr _menu1
     invoke StdOut, addr _menu2
     invoke StdOut, addr _menu3
     invoke StdOut, addr _menu4
+    invoke StdOut, addr _msg0
     invoke StdIn, addr menu, 3
+    
+    mov al, [menu]
+    cmp al, '1'
+    jb menu_input
+    cmp al, '4'
+    ja menu_input
 
 .if menu == '1'
     invoke ClearScreen
@@ -92,6 +103,7 @@ main_menu:
     invoke StdIn, addr _input, 4
 .elseif menu == '2'
 enlist:
+year_input:
     invoke ClearScreen
     invoke StdOut, addr _first_year
     invoke StdOut, addr _second_year
@@ -102,6 +114,13 @@ enlist:
     invoke RtlZeroMemory, addr year, 4
     invoke StdIn, addr year, 4
 
+    mov al, [year]
+    cmp al, '1'
+    jb year_input
+    cmp al, '4'
+    ja year_input
+
+sem_input:
     invoke StdOut, addr _first_sem
     invoke StdOut, addr _second_sem
     invoke StdOut, addr _msg2
@@ -109,14 +128,121 @@ enlist:
     invoke RtlZeroMemory, addr sem, 4
     invoke StdIn, addr sem, 4
 
+    mov al, [sem]
+    cmp al, '1'
+    jb sem_input
+    cmp al, '2'
+    ja sem_input
+
+course_input:
     invoke SetCourses, sem, year
     invoke StdOut, addr _enlist
     invoke StdIn, addr _course, 4
     
-    .if _course == '0'
-        jmp main_menu
-    .endif
+    mov al, [_course]
+    cmp al, '0'
+    je main_menu
 
+    sub al, '0'         ; now AL contains the numeric value
+    mov cl, al  
+
+    mov al, [year]
+    sub al, '0'
+    mov year_num, al  
+    
+    mov al, [sem]
+    sub al, '0'
+    mov sem_num, al    ; EBX now holds the numeric semester
+
+    movzx eax, byte ptr [year_num]  ; EAX = numeric year
+    movzx ebx, byte ptr [sem_num]   ; EBX = numeric semester
+
+    cmp eax, 1
+    je year1
+    cmp eax, 2
+    je year2
+    cmp eax, 3
+    je year3
+    cmp eax, 4
+    je year4
+
+
+year1:
+    cmp ebx, 1
+    je set_max_8
+    cmp ebx, 2
+    je set_max_8
+
+
+year2:
+    cmp ebx, 1
+    je set_max_8
+    cmp ebx, 2
+    je set_max_8
+
+
+year3:
+    cmp ebx, 1
+    je set_max_7
+    cmp ebx, 2
+    je set_max_6
+
+year4:
+    cmp ebx, 1
+    je set_max_5
+    cmp ebx, 2
+    je set_max_2
+
+
+set_max_8:
+    mov ecx, 8
+    jmp set_done
+
+set_max_7:
+    mov ecx, 7
+    jmp set_done
+
+set_max_6:
+    mov ecx, 6
+    jmp set_done
+
+set_max_5:
+    mov ecx, 5
+    jmp set_done
+
+set_max_2:
+    mov ecx, 2
+    jmp set_done
+
+set_done:
+    ; Now ECX contains the maximum allowed course number.
+    ; (For example, if year 1 and sem 1, then ECX = 8)
+
+    ; Convert _course input from ASCII to numeric:
+    mov al, [_course]
+    cmp al, '0'
+    je main_menu            ; If the user entered '0', return to menu.
+    sub al, '0'
+    movzx edx, al           ; EDX = numeric course input
+
+    cmp edx, 1
+    jl invalid_course_input  ; if input < 1, it's invalid
+    cmp edx, ecx
+    ja invalid_course_input  ; if input > maximum, it's invalid
+
+    ; Otherwise, valid input. Save it:
+    mov course_num, al
+
+    jmp proceed_enlist
+
+invalid_course_input:
+    invoke StdOut, addr _invalid_course_msg
+
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+    jmp course_input
+
+proceed_enlist:
     mov al, [year]
     sub al, '0'
     mov year_num, al

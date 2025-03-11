@@ -88,7 +88,6 @@
     tempspace db 9,9,0
     tempspace2 db 9,0
     namespace db " - ",0
-    course_found_var db 0  
 
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
