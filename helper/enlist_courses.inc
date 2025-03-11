@@ -59,16 +59,24 @@
     success_msg   db "Course enlisted successfully!", 13, 10, 0
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
 
-    headLine db "+-------------------------+", 0
-    gridLine db "+---------------+---------+", 0
-    first_sem1 db "| 1ST YEAR - 1ST SEMESTER |", 0
-    first_sem2 db "| 1ST YEAR - 2ND SEMESTER |", 0
-    second_sem1 db "| 2ND YEAR - 1ST SEMESTER |", 0
-    second_sem2 db "| 2ND YEAR - 2ND SEMESTER |", 0 
-    third_sem1 db "| 3RD YEAR - 1ST SEMESTER |", 0
-    third_sem2 db "| 3RD YEAR - 2ND SEMESTER |", 0
-    fourth_sem1 db "| 4TH YEAR - 1ST SEMESTER |", 0
-    fourth_sem2 db "| 4TH YEAR - 2ND SEMESTER |", 0
+    course_bar1 db 124,9,0
+    course_bar2 db 9,179,9,0
+    course_bar3 db 9,179,0
+
+    
+    headLine db "+-------------------------------+",10, 0
+    gridLine db "+---------------+---------------+", 10,0
+    first_sem1 db "|    1ST YEAR - 1ST SEMESTER    |", 10,0
+    first_sem2 db "|    1ST YEAR - 2ND SEMESTER    |", 10,0
+    second_sem1 db "|    2ND YEAR - 1ST SEMESTER    |", 10,0
+    second_sem2 db "|    2ND YEAR - 2ND SEMESTER    |", 10,0 
+    third_sem1 db "|    3RD YEAR - 1ST SEMESTER    |", 10,0
+    third_sem2 db "|    3RD YEAR - 2ND SEMESTER    |", 10,0
+    fourth_sem1 db "|    4TH YEAR - 1ST SEMESTER    |", 10,0
+    fourth_sem2 db "|    4TH YEAR - 2ND SEMESTER    |", 10,0
+
+    column_headers db "|   Subj Code   |     Units     |", 10,0
+    total_units_line db "            | Total Units: ", 10,0
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
                 DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
@@ -91,6 +99,7 @@
 .data?
     _inputs db 4 dup(?)
     tempBuffer db 16 dup(?)
+    tempCourseBuffer db 32 dup(?)
 
 .code
 EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total_ptr:DWORD
@@ -165,9 +174,32 @@ done:
     ret
 EnlistCourse endp
 
-DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD
+DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:BYTE, sem:BYTE
+    LOCAL start_index:DWORD 
     invoke StdOut, addr newLine
+    invoke StdOut, addr headLine
+    .if year == 1 && sem == 1
+        invoke StdOut, addr first_sem1
+    .elseif year == 1 && sem == 2
+        invoke StdOut, addr first_sem2
+    .elseif year == 2 && sem == 1
+        invoke StdOut, addr second_sem1
+    .elseif year == 2 && sem == 2
+        invoke StdOut, addr second_sem2
+    .elseif year == 3 && sem == 1
+        invoke StdOut, addr third_sem1
+    .elseif year == 3 && sem == 2
+        invoke StdOut, addr third_sem2
+    .elseif year == 4 && sem == 1
+        invoke StdOut, addr fourth_sem1
+    .elseif year == 4 && sem == 2
+        invoke StdOut, addr fourth_sem2
+    .endif
+
     invoke StdOut, addr gridLine
+    invoke StdOut, addr column_headers
+    invoke StdOut, addr gridLine 
+
     pushad              ; Save all registers
     mov esi, array_ptr  ; Array pointer
     mov ecx, element_count ; Element count
@@ -181,12 +213,45 @@ print_loop:
     mov eax, [esi + edx*4]
     test eax, eax       ; Check if element is 0
     jz skip_print
-
-    ; Print course name
+    
+    ; Print course name and unit
     push edx            ; Preserve index
     push ecx            ; Preserve counter
-    invoke StdOut, eax
-    invoke StdOut, addr newline
+    push eax
+    mov ebx, eax
+    invoke lstrcpyn, addr tempCourseBuffer, ebx, sizeof tempCourseBuffer
+    pop eax
+    
+
+    ; Find course index in courseTable
+    mov edi, offset courseTable
+    mov ecx, 52         ; Total courses
+
+find_course_loop:
+    cmp [edi], eax
+    je found_course
+    add edi, 4
+    loop find_course_loop
+    jmp skip_restore    ; Shouldn't happen if data is consistent
+
+found_course:
+    sub edi, offset courseTable ; EDI now holds byte offset
+    shr edi, 2          ; Convert to index (EDI = index in courseTable)
+    
+    ; Get unit value
+    movzx eax, byte ptr [unitTable + edi]
+    invoke dwtoa, eax, addr tempBuffer
+
+    ; Print formatted line
+    invoke StdOut, addr course_bar1
+    invoke StdOut, addr tempCourseBuffer
+    invoke StdOut, addr course_bar2
+    invoke StdOut, addr tempBuffer
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr gridLine
+
+skip_restore:
     pop ecx             ; Restore counter
     pop edx             ; Restore index
 
@@ -196,14 +261,14 @@ skip_print:
 
 done_printing:
     ; Print total units
-    invoke StdOut, addr newline
+    invoke StdOut, addr newLine
     invoke StdOut, addr totalMsg
     
-    mov edi, total_ptr              ; Load total pointer
-    movzx eax, byte ptr [edi]       ; Get total value (0-255)
+    mov edi, total_ptr
+    movzx eax, byte ptr [edi]
     invoke dwtoa, eax, addr tempBuffer
     invoke StdOut, addr tempBuffer
-    invoke StdOut, addr newline
+    invoke StdOut, addr newLine
 
     ; Return to menu prompt
     invoke StdOut, addr return_prompt
@@ -212,9 +277,3 @@ done_printing:
     popad               ; Restore registers
     ret
 DisplayCourses endp
-
-;+-------------------------+
-;| 1ST YEAR - 1ST SEMESTER |
-;+---------------+---------+
-;|   Subj Code   |  Units  |
-;+---------------+---------+

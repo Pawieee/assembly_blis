@@ -250,7 +250,7 @@ enlist:
     .endif
 
     ; Show courses
-    invoke DisplayCourses, edi, ecx, esi
+    invoke DisplayCourses, edi, ecx, esi, year_num, sem_num
     jmp main_menu
 .elseif menu == '4'
     invoke ExitProcess, 0
