@@ -239,7 +239,7 @@ sem_loop:
     .endif
 
     ; Show courses for this semester
-    invoke DisplayCourses, edi, ecx, esi, year_num, sem_num
+    invoke DisplayCourses, edi, ecx, esi, year_num, sem_num, addr fname, addr id
     invoke ClearScreen
 
     ; Increment semester
