@@ -54,29 +54,31 @@
     
     newLine         db 10, 0
     return_prompt   db "Press 'Enter' key to continue...", 10, 0
-    totalMsg   db "Total Units: ", 0
+    totalMsg   db "Total Units", 0
 
     success_msg   db "Course enlisted successfully!", 13, 10, 0
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
 
     course_bar1 db 124,9,0
+    course_bar1a db 124,32,32,32,32, 0
     course_bar2 db 9,32,32,32,179,9,32,32,0
+    course_bar2a db 32,32,32,179,9,32,32,0
     course_bar3 db 9,32,32,179,0
 
     
     headLine db "+---------------------------------+",10, 0
     gridLine db "+------------------+--------------+", 10,0
     first_sem1 db "|     1ST YEAR - 1ST SEMESTER     |", 10,0
-    first_sem2 db "|     1ST YEAR - 2ND SEMESTER    |", 10,0
-    second_sem1 db "|     2ND YEAR - 1ST SEMESTER    |", 10,0
-    second_sem2 db "|     2ND YEAR - 2ND SEMESTER    |", 10,0 
-    third_sem1 db "|     3RD YEAR - 1ST SEMESTER    |", 10,0
-    third_sem2 db "|     3RD YEAR - 2ND SEMESTER    |", 10,0
-    fourth_sem1 db "|     4TH YEAR - 1ST SEMESTER    |", 10,0
-    fourth_sem2 db "|     4TH YEAR - 2ND SEMESTER    |", 10,0
+    first_sem2 db "|     1ST YEAR - 2ND SEMESTER     |", 10,0
+    second_sem1 db "|     2ND YEAR - 1ST SEMESTER     |", 10,0
+    second_sem2 db "|     2ND YEAR - 2ND SEMESTER     |", 10,0 
+    third_sem1 db "|     3RD YEAR - 1ST SEMESTER     |", 10,0
+    third_sem2 db "|     3RD YEAR - 2ND SEMESTER     |", 10,0
+    fourth_sem1 db "|     4TH YEAR - 1ST SEMESTER     |", 10,0
+    fourth_sem2 db "|     4TH YEAR - 2ND SEMESTER     |", 10,0
 
     column_headers db "|    Subj Code     |     Units    |", 10,0
-    total_units_line db "            | Total Units: ", 10,0
+
 
     courseTable DWORD OFFSET course111, OFFSET course112, OFFSET course113, OFFSET course114, OFFSET course115, OFFSET course116, OFFSET course117, OFFSET course118
                 DWORD OFFSET course121, OFFSET course122, OFFSET course123, OFFSET course124, OFFSET course125, OFFSET course126, OFFSET course127, OFFSET course128
@@ -217,10 +219,10 @@ print_loop:
     ; Print course name and unit
     push edx            ; Preserve index
     push ecx            ; Preserve counter
-    push eax
+    push eax            ; Preserve course pointer
     mov ebx, eax
     invoke lstrcpyn, addr tempCourseBuffer, ebx, sizeof tempCourseBuffer
-    pop eax
+    pop eax             ; Restore course pointer
     
 
     ; Find course index in courseTable
@@ -261,13 +263,17 @@ skip_print:
 
 done_printing:
     ; Print total units
-    invoke StdOut, addr newLine
+    invoke StdOut, addr course_bar1a
     invoke StdOut, addr totalMsg
+    invoke StdOut, addr course_bar2a
     
     mov edi, total_ptr
     movzx eax, byte ptr [edi]
     invoke dwtoa, eax, addr tempBuffer
     invoke StdOut, addr tempBuffer
+    invoke StdOut, addr course_bar3
+    invoke StdOut, addr newLine
+    invoke StdOut, addr gridLine
     invoke StdOut, addr newLine
 
     ; Return to menu prompt

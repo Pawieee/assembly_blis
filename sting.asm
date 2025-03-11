@@ -78,6 +78,7 @@ start:
     invoke StdOut, addr _id
     invoke StdIn, addr id, 100
 main_menu:
+    invoke ClearScreen
     invoke StdOut, addr _menu1
     invoke StdOut, addr _menu2
     invoke StdOut, addr _menu3
@@ -85,9 +86,11 @@ main_menu:
     invoke StdIn, addr menu, 3
 
 .if menu == '1'
+    invoke ClearScreen
     invoke ReadFileProc, addr prospec
 .elseif menu == '2'
 enlist:
+    invoke ClearScreen
     invoke StdOut, addr _first_year
     invoke StdOut, addr _second_year
     invoke StdOut, addr _third_year
@@ -166,6 +169,7 @@ enlist:
     mov course_num, al
 
     ; Enlist the course
+    invoke ClearScreen
     invoke EnlistCourse, year_num, sem_num, course_num, array_ptr, esi
 
     invoke StdOut, addr _prompt
@@ -179,6 +183,7 @@ enlist:
     .endif
         
 .elseif menu =='3'
+    invoke ClearScreen
     invoke StdOut, addr _first_year
     invoke StdOut, addr _second_year
     invoke StdOut, addr _third_year
