@@ -58,7 +58,6 @@
 
     success_msg   db "Course enlisted successfully!", 13, 10, 0
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
-    blankMsg db "No courses enlisted yet.", 13, 10, 0
 
     course_bar1 db 124,9,0
     course_bar1a db 124,9,9,0
@@ -114,8 +113,6 @@
     tempCourseBuffer db 32 dup(?)
 
 .code
-mov course_found_var, 0
-
 EnlistCourse proc year_num:BYTE, sem_num:BYTE, course_num:BYTE, arr:DWORD, total_ptr:DWORD
     LOCAL start_index:DWORD
     mov start_index, 0
@@ -190,34 +187,6 @@ EnlistCourse endp
 
 DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:BYTE, sem:BYTE, namePtr:DWORD, idPtr:DWORD
     LOCAL start_index:DWORD 
-    pushad              ; Save all registers
-    mov esi, array_ptr  ; Array pointer
-    mov ecx, element_count ; Total number of courses
-    xor edx, edx        ; Index counter
-    xor eax, eax        ; Reset register
-
-    ; 🔹 Check if there is at least one non-zero entry in the array
-    mov ebx, 0          ; Flag to track if a course exists
-
-check_array_loop:
-    cmp edx, ecx        ; If edx >= ecx, we're done checking
-    jge check_done
-
-    mov eax, [esi + edx*4]  ; Load array value
-    test eax, eax           ; Check if it's non-zero
-    jnz course_found        ; If we find a valid course, skip to normal printing
-
-    inc edx                 ; Move to next index
-    jmp check_array_loop    ; Continue checking
-
-course_found:
-    mov ebx, 1              ; Set flag to indicate at least one course exists
-    mov course_found_var, 1     ; Set global flag
-
-check_done:
-    cmp ebx, 0              ; If flag is still 0, no courses were found
-    je end_print        ; Skip printing if the array is empty
-
     invoke StdOut, addr newLine
     invoke StdOut, addr base_gridlines
     invoke StdOut, addr course_bar1
@@ -271,6 +240,34 @@ check_done:
     invoke StdOut, addr gridLine
     invoke StdOut, addr column_headers
     invoke StdOut, addr gridLine 
+
+    pushad              ; Save all registers
+    mov esi, array_ptr  ; Array pointer
+    mov ecx, element_count ; Total number of courses
+    xor edx, edx        ; Index counter
+    xor eax, eax        ; Reset register
+
+    ; 🔹 Check if there is at least one non-zero entry in the array
+    mov ebx, 0          ; Flag to track if a course exists
+
+check_array_loop:
+    cmp edx, ecx        ; If edx >= ecx, we're done checking
+    jge check_done
+
+    mov eax, [esi + edx*4]  ; Load array value
+    test eax, eax           ; Check if it's non-zero
+    jnz course_found        ; If we find a valid course, skip to normal printing
+
+    inc edx                 ; Move to next index
+    jmp check_array_loop    ; Continue checking
+
+course_found:
+    mov ebx, 1              ; Set flag to indicate at least one course exists
+
+check_done:
+    cmp ebx, 0              ; If flag is still 0, no courses were found
+    je end_print        ; Skip printing if the array is empty
+
     ; Reset index for actual printing
     xor edx, edx
 
@@ -356,14 +353,5 @@ done_printing:
 
     popad               ; Restore registers
 end_print:
-    .if element_count == 2 && course_found_var == 0
-        invoke StdOut, addr blankMsg
-            ; Return to menu prompt
-        invoke StdOut, addr return_prompt
-        invoke StdIn, addr _inputs, 4
-        popad
-        ret
-    .endif
     ret
-
 DisplayCourses endp
