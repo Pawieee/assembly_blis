@@ -103,10 +103,14 @@ menu_input:
     invoke StdIn, addr menu, 3
     
     mov al, [menu]
+    mov ah, [menu+1]
+
     cmp al, '1'
     jb menu_input
     cmp al, '4'
     ja menu_input
+    cmp ah, 0
+    jne menu_input
 
 .if menu == '1'
     invoke ClearScreen
@@ -127,10 +131,13 @@ year_input:
     invoke StdIn, addr year, 4
 
     mov al, [year]
+    mov ah, [year+1] 
     cmp al, '1'
     jb year_input
     cmp al, '4'
     ja year_input
+    cmp ah, 0            ; Ensure second character is NULL
+    jne year_input  
 
 sem_input:
     invoke StdOut, addr _first_sem
@@ -141,20 +148,30 @@ sem_input:
     invoke StdIn, addr sem, 4
 
     mov al, [sem]
+    mov ah, [sem+1]
     cmp al, '1'
     jb sem_input
     cmp al, '2'
     ja sem_input
+    cmp ah, 0
+    jne sem_input
 
 course_input:
     invoke SetCourses, sem, year
     invoke StdOut, addr _enlist
     invoke StdIn, addr _course, 4
     
+    mov al, [_course+1]
+    cmp al, 0
+    jne invalid_course_input
+
     mov al, [_course]
+
     cmp al, '0'
     je main_menu
 
+
+    
     sub al, '0'         ; now AL contains the numeric value
     mov cl, al  
 
@@ -328,6 +345,7 @@ prompt:
         
 .elseif menu =='3'
     invoke ClearScreen
+    mov is_course_found, 0 
     mov year_num, 1  ; Start from 1st Year
 
 year_loop:

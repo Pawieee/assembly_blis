@@ -55,9 +55,12 @@
     newLine         db 10, 0
     return_prompt   db "Press 'Enter' key to continue...", 10, 0
     totalMsg   db "Total Units", 0
+    is_course_found db 0
+
 
     success_msg   db "Course enlisted successfully!", 13, 10, 0
     duplicate_msg db "Error: Course already enlisted!", 13, 10, 0
+    no_courses_msg db "No enrolled courses yet.", 13, 10, 0
 
     course_bar1 db 124,9,0
     course_bar1a db 124,9,9,0
@@ -235,8 +238,6 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
         invoke StdOut, addr fourth_sem2
     .endif
 
-
-
     invoke StdOut, addr gridLine
     invoke StdOut, addr column_headers
     invoke StdOut, addr gridLine 
@@ -247,7 +248,6 @@ DisplayCourses proc array_ptr:DWORD, element_count:DWORD, total_ptr:DWORD, year:
     xor edx, edx        ; Index counter
     xor eax, eax        ; Reset register
 
-    ; 🔹 Check if there is at least one non-zero entry in the array
     mov ebx, 0          ; Flag to track if a course exists
 
 check_array_loop:
@@ -256,17 +256,18 @@ check_array_loop:
 
     mov eax, [esi + edx*4]  ; Load array value
     test eax, eax           ; Check if it's non-zero
-    jnz course_found        ; If we find a valid course, skip to normal printing
+    jnz course_found        ; If a valid course is found, proceed
 
     inc edx                 ; Move to next index
     jmp check_array_loop    ; Continue checking
 
 course_found:
     mov ebx, 1              ; Set flag to indicate at least one course exists
+    mov is_course_found, 1
 
 check_done:
     cmp ebx, 0              ; If flag is still 0, no courses were found
-    je end_print        ; Skip printing if the array is empty
+    je end_print            ; Skip printing if no courses exist
 
     ; Reset index for actual printing
     xor edx, edx
@@ -275,12 +276,10 @@ print_loop:
     cmp edx, ecx        ; Check if index >= count
     jge done_printing
 
-    ; Get current element
     mov eax, [esi + edx*4]
     test eax, eax       ; Check if element is 0
     jz skip_print
-    
-    ; Print course name and unit
+
     push edx            ; Preserve index
     push ecx            ; Preserve counter
     push eax            ; Preserve course pointer
@@ -288,7 +287,6 @@ print_loop:
     invoke lstrcpyn, addr tempCourseBuffer, ebx, sizeof tempCourseBuffer
     pop eax             ; Restore course pointer
     
-    ; Find course index in courseTable
     mov edi, offset courseTable
     mov ecx, 52         ; Total courses
 
@@ -297,22 +295,19 @@ find_course_loop:
     je found_course
     add edi, 4
     loop find_course_loop
-    jmp skip_restore    ; Shouldn't happen if data is consistent
+    jmp skip_restore    
 
 found_course:
-    sub edi, offset courseTable ; EDI now holds byte offset
-    shr edi, 2          ; Convert to index (EDI = index in courseTable)
-    
-    ; Get unit value
+    sub edi, offset courseTable ; Get index
+    shr edi, 2          
     movzx eax, byte ptr [unitTable + edi]
     invoke dwtoa, eax, addr tempBuffer
 
-    ; Print formatted line
     invoke StdOut, addr course_bar1b
     invoke StdOut, addr tempCourseBuffer
 
     invoke lstrlen, addr tempCourseBuffer 
-    cmp eax, 9           ; Compare course name length with 12
+    cmp eax, 9           
     jge use_single_tab 
     invoke StdOut, addr course_bar2
     jmp print_course
@@ -325,15 +320,14 @@ print_course:
     invoke StdOut, addr gridLine
 
 skip_restore:
-    pop ecx             ; Restore counter
-    pop edx             ; Restore index
+    pop ecx             
+    pop edx             
 
 skip_print:
-    inc edx             ; Next index
+    inc edx             
     jmp print_loop
 
 done_printing:
-    ; Print total units
     invoke StdOut, addr course_bar1a
     invoke StdOut, addr totalMsg
     invoke StdOut, addr course_bar2a
@@ -347,11 +341,25 @@ done_printing:
     invoke StdOut, addr gridLine
     invoke StdOut, addr newLine
 
-    ; Return to menu prompt
     invoke StdOut, addr return_prompt
     invoke StdIn, addr _inputs, 4
 
-    popad               ; Restore registers
+    popad               
+
 end_print:
+    ; 🔹 If this is the last call and no courses were found, print message
+    cmp element_count, 2
+    jne done_proc
+    cmp is_course_found, 0
+    jne done_proc
+    
+    invoke ClearScreen
+    invoke StdOut, addr no_courses_msg
+
+    invoke StdOut, addr return_prompt
+    invoke StdIn, addr _inputs, 4
+
+done_proc:
     ret
 DisplayCourses endp
+
