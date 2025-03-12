@@ -13,10 +13,6 @@ include helper\set_courses.inc
 include helper\enlist_courses.inc
 
 .data
-    file_handle HANDLE ?
-    file_contents db 100000 dup(?)
-    bytes_read  DWORD ?
-
     _name db "Enter your name: ",0
     _id db "Enter your ID: ",0
 
@@ -66,10 +62,10 @@ include helper\enlist_courses.inc
     fname db 100 dup(?)
     id db 100 dup(?)
     menu db 3 dup(?)
-    year  db 4 dup(?)
-    sem db 4 dup(?)
-    _course db 4 dup(?)
-    _input db 4 dup(?)
+    year  db 20 dup(?)
+    sem db 20 dup(?)
+    _course db 20 dup(?)
+    _input db 20 dup(?)
     year_num db ?
     sem_num db ?
     course_num db ?
@@ -116,7 +112,7 @@ menu_input:
     invoke ClearScreen
     invoke ReadFileProc, addr prospec
     invoke StdOut, addr return_prompt
-    invoke StdIn, addr _input, 4
+    invoke StdIn, addr _input, 20
 .elseif menu == '2'
 enlist:
 year_input:
@@ -127,8 +123,8 @@ year_input:
     invoke StdOut, addr _fourth_year
     invoke StdOut, addr _msg1
 
-    invoke RtlZeroMemory, addr year, 4
-    invoke StdIn, addr year, 4
+    invoke RtlZeroMemory, addr year, 20
+    invoke StdIn, addr year, 20
 
     mov al, [year]
     mov ah, [year+1] 
@@ -144,8 +140,8 @@ sem_input:
     invoke StdOut, addr _second_sem
     invoke StdOut, addr _msg2
 
-    invoke RtlZeroMemory, addr sem, 4
-    invoke StdIn, addr sem, 4
+    invoke RtlZeroMemory, addr sem, 20
+    invoke StdIn, addr sem, 20
 
     mov al, [sem]
     mov ah, [sem+1]
@@ -159,7 +155,7 @@ sem_input:
 course_input:
     invoke SetCourses, sem, year
     invoke StdOut, addr _enlist
-    invoke StdIn, addr _course, 4
+    invoke StdIn, addr _course, 20
     
     mov al, [_course+1]
     cmp al, 0
